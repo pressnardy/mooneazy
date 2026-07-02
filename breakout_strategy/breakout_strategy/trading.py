@@ -95,7 +95,7 @@ class BuyTrade(TradeSetup):
     def trade_details(self):
         if self.trade_direction != "buy":
             return None
-        return {
+        trade_signal =  self.signal.update({
             "trigger_time": self.signal_time,
             "entry_price": self.entry_price,
             "sl": self.buy_sl(),
@@ -103,8 +103,8 @@ class BuyTrade(TradeSetup):
             "tp2": self.tp2(),
             "direction": "buy",
             "interval": self.interval
-        }
-
+        })
+        return trade_signal
 
 class SellTrade(TradeSetup):
     def __init__(self, signal, tp1_rrr=3, tp2_rrr=10, sl_padding=0.01):
@@ -126,7 +126,7 @@ class SellTrade(TradeSetup):
     def trade_details(self):
         if self.trade_direction != "sell":
             return None
-        return {
+        trade_signal =  self.signal.update({
             "trigger_time": self.signal_time,
             "entry_price": self.entry_price,
             "sl": self.sell_sl(),
@@ -134,8 +134,8 @@ class SellTrade(TradeSetup):
             "tp2": self.tp2(),
             "direction": "sell",
             "interval": self.interval
-        }
-
+        })
+        return trade_signal
 
 def get_trade(signal, tp1_rrr=3, tp2_rrr=10, sl_padding=0.01):
     """

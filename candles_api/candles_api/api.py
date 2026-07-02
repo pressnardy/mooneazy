@@ -4,7 +4,7 @@ import candles_api.yahoo as yahoo
 import candles_api.config as config
 
 
-def get_candles(parameters: dict, supported_symbols: dict[set] = None)->list[dict]:
+def get_candles(parameters: dict = None, supported_symbols: dict[set] = None)->list[dict]:
     '''fetching candle stick data from either binance  or yahoo apis
     
     Args:
@@ -23,7 +23,7 @@ def get_candles(parameters: dict, supported_symbols: dict[set] = None)->list[dic
     supported_symbols = supported_symbols or config.SUPPORTED_SYMBOLS
     api_server = None
     try:
-        if parameters['symbol'] in supported_symbols['crypto']:
+        if parameters['symbol'] in supported_symbols['binance']:
             api_server = binance
         else:
             api_server = yahoo

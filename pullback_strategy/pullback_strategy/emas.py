@@ -57,10 +57,10 @@ class EmaCross:
         return self.get_emas(period)[-1]
 
     def is_bullish(self):
-        return self.get_fast_ema() > self.get_slow_ema()
+        return self.get_fast_ema()['value'] > self.get_slow_ema()['value']
 
     def is_bearish(self):
-        return self.get_fast_ema() < self.get_slow_ema()
+        return self.get_fast_ema()['value'] < self.get_slow_ema()['value']
 
     def get_last_cross(self):
         fast_emas = self.get_emas(self.fast_period)

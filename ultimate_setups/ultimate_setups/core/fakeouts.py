@@ -4,19 +4,26 @@ from ultimate_setups.core import util
 def get_bullish_fa(candles, level, fo_lookback):
     triggers = []
     for i, candle in enumerate(candles):
+        if i + 1 < fo_lookback:
+            continue
         lb_low = get_lb_low(candles, candle, level, i)
         if lb_low == "break":
             break
         if not lb_low:
             continue
         if fa := is_bullish_fa(candles, lb_low, level, fo_lookback, i):
+            print(f'fa: {fa}')
+
             triggers.append(fa)
+
     return util.eliminate_triggers(triggers) if triggers else None
 
 
 def get_bearish_fa(candles, level, fo_lookback):
     triggers = []
     for i, candle in enumerate(candles):
+        if i + 1 < fo_lookback:
+            continue
         lb_high = get_lb_high(candles, candle, level, i)
         if lb_high == "break":
             break
@@ -31,6 +38,8 @@ def get_bearish_fa(candles, level, fo_lookback):
 def get_bearish_sfp(candles, level, fo_lookback):
     triggers = []
     for i, candle in enumerate(candles):
+        if i + 1 < fo_lookback:
+            continue
         lb_high = get_lb_high(candles, candle, level, i)
         if lb_high == "break":
             break
@@ -45,6 +54,8 @@ def get_bearish_sfp(candles, level, fo_lookback):
 def get_bullish_sfp(candles, level, fo_lookback):
     triggers = []
     for i, candle in enumerate(candles):
+        if i + 1 < fo_lookback:
+            continue
         lb_low = get_lb_low(candles, candle, level, i)
         if lb_low == "break":
             break
@@ -148,6 +159,10 @@ def get_lb_low(candles, candle, level, candle_index):
 
 
 def get_level_candles(candles, level, candle_index):
+    """
+    returns candles from time the level pivot
+    was formed to the candle being tested 
+    """
     for i, candle in enumerate(candles):
         if candle["time"] == level["time"]:
             return candles[i:candle_index + 1]
@@ -156,11 +171,12 @@ def get_level_candles(candles, level, candle_index):
 
 def get_fo_range_details(candles, fo_lookback, candle_index):
     """
-    fo_range is the minimum number of lookback candles
+    fo_lookback is the minimum number of lookback candles
     reviewed to check for a single fakeout trigger
     """
     fo_candles = util.get_lookback_candles(candles, fo_lookback, candle_index)
-    return util.get_range_details(fo_candles)
+    if fo_candles:
+        return util.get_range_details(fo_candles)
 
 
 def is_bearish_sfp(candles, lb_high, level, fo_lookback, candle_index):
@@ -192,13 +208,16 @@ def is_bullish_sfp(candles, lb_low, level, fo_lookback, candle_index):
 
 
 def is_bullish_fa(candles, lb_low, level, fo_lookback, candle_index):
+    
     min_oc, min_low, max_oc, max_high = get_fo_range_details(
         candles, fo_lookback, candle_index
     )
     if min_low != lb_low:
+        print(min_low, lb_low)
         return False
     level_value = util.resolve_level(level)
     candle = candles[candle_index]
+    print(candle)
     if min_oc < level_value < max_oc and candle["close"] > level_value > candle["low"]:
         return {"trigger_candle": candle, "lookback_hl": min_low, "signal_type": "fa_buy", "level": level_value}
     return False

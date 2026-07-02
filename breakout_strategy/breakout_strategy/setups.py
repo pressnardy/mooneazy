@@ -40,9 +40,13 @@ def get_signal(symbol):
     }
     trade_signals = []
     for interval in trading_tf_intervals:
-        candles = get_candles(symbol, interval, trading_tf_limit)
+        candles = get_candles(
+            symbol=symbol,
+            interval=interval,
+            limit=trading_tf_limit
+        )
         signal_kwargs['trading_tf_candles'] = candles
-        signal_kwargs['interval'] = interval 
+        signal_kwargs['interval'] = interval
         signal = signals.get_signal(**signal_kwargs)
         if signal:
             trade_signals.extend(signal)

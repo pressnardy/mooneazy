@@ -1,16 +1,12 @@
 from ultimate_setups.core import pivots
-from ultimate_setups.core import apirequests
-from ultimate_setups.core import settings
 from ultimate_setups.core import util
 
 
 class Chart:
-    def __init__(self, candles, symbol, interval, pivot_lookback, limit):
+    def __init__(self, candles, range_quantity, pivot_lookback):
         self._candles = candles
         self._pivot_lookback = pivot_lookback
-        self._time_frame = interval
-        self._range_quantity = limit
-        self._symbol = symbol
+        self._range_quantity = range_quantity
 
     @property
     def range_quantity(self):
@@ -49,7 +45,7 @@ class Chart:
 
     @classmethod
     def start_chart(cls, candles: list, range_quantity: int, pivot_lookback: int):
-        chart = cls(candles)
+        chart = cls(candles, range_quantity, pivot_lookback)
         chart.set_pivot_lookback(pivot_lookback)
         chart.set_range_quantity(range_quantity)
         return chart

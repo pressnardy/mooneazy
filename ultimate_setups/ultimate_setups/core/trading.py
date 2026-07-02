@@ -131,6 +131,8 @@ def get_trade(signal, tp1_rrr=3, tp2_rrr=10, sl_padding=0.01):
     trade_details = {}
     if signal is None:
         return None
+    trade_details.update(signal)
+    
     if buy_trade := BuyTrade(
         signal, tp1_rrr, tp2_rrr, sl_padding
         ).trade_details():

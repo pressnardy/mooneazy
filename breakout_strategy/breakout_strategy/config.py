@@ -17,7 +17,7 @@ HTF_LIMIT = 250
 
 # trading candles settings
 TRADING_TF_INTERVALS = ['15m', '30m']
-TRADING_TF_LIMIT = [250]
+TRADING_TF_LIMIT = 250
 
 
 # trading settings

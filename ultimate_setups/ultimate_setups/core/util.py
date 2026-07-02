@@ -2,8 +2,7 @@ import copy
 import json
 import time
 from datetime import datetime, timezone
-from ultimatesetups.core import apirequests
-from ultimatesetups.core import settings, indicators
+from ultimate_setups.core import settings
 
 
 def get_candles_from_json(file_name):
@@ -63,6 +62,12 @@ def get_next(elements: list, index: int):
 
 
 def get_range_details(candles):
+    # print('called')
+    if not candles:
+        raise ValueError(
+            'util.get_range_details expects candles but got None'
+        )
+    # print(f"util_get_range_details {candles}")
     min_open = min(c["open"] for c in candles)
     min_close = min(c["close"] for c in candles)
     min_low = min(c["low"] for c in candles)
@@ -120,11 +125,13 @@ def create_fo_signal(period, trigger):
 
 
 def get_lookback_candles(candles, lookback, candle_index):
-    if lookback <= candle_index <= len(candles):
-        fo_candles = candles[candle_index - lookback:candle_index + 1]
+    # print(f"util.get_lookback_candles {len(candles)}: {lookback}: {candle_index}")
+    if lookback <= candle_index + 1 <= len(candles):
+        fo_candles = candles[candle_index + 1 - lookback:candle_index + 1]
+        # print(f"util.get_lookback_candles{len(fo_candles)}")
         return fo_candles
 
-    return False
+    raise 
 
 
 def resolve_level(level):
@@ -232,5 +239,45 @@ def is_candle_close(unit='hour', value=4):
         return hour == 0
     
     raise TypeError('invalid unit')
+
+
+def is_bullish_rsi_div(
+        candles: list[dict], 
+        rsi_values:list[dict], 
+        level, 
+        pivot_lookbacks=(30, 30), 
+        fo_lookback=5
+    ):
+    fo_candles = candles[-fo_lookback:]
+    fo_rsis = rsi_values[-fo_lookback:]
+    trigger_candle = candles[-1]
+    lookback_rsis = []
+    lookback_candles = []
+    min_rsi = None
+
+    for i, candle in enumerate(candles):
+        if i < pivot_lookbacks[0] or candle['time'] != level['time']:
+            continue
+        candle = candles[i]
+
+        lookback_rsis = rsi_values[i - pivot_lookbacks[0]: i + pivot_lookbacks[1]]
+        lookback_candles = candles[i - pivot_lookbacks[0]: i + pivot_lookbacks[1]]
+        min_rsi = min(r['value'] for r in lookback_rsis)
+        rsi1 = [rsi for rsi in lookback_rsis if rsi['value'] == min_rsi ][0]
+        
+        rsi1_value = rsi1['value']
+        rsi2_value = min(r['value'] for r in fo_rsis)
+        candle1_close = (c['close'] for c in  lookback_candles)
+        candle2_close = min(c['close'] for c in fo_candles)
+
+        return rsi1_value < rsi2_value and candle1_close > candle2_close
+        
+
+
+
+    
+
+    
+        
 
 

@@ -33,7 +33,9 @@ def in_trend(
     if not higher_htf_candles:
         return False
     if is_bullish_pullback == is_bullish_cross(
-        htf_candles=higher_htf_candles
+        htf_candles=higher_htf_candles,
+        fast_ema_period=fast_ema,  
+        slow_ema_period=slow_ema
         ):
         return True
     return False 

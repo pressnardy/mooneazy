@@ -1,6 +1,6 @@
 
 def is_bullish(candle):
-    return candle['close'] > candle['low']
+    return candle['close'] > candle['open']
 
 
 def is_valid_min_oposite(lookback_candles, breakout_candle, min_oposit=None):
@@ -42,22 +42,26 @@ def breaks_emas(breakout_candle, fast_ema_value, slow_ema_value):
         breakout_candle, fast_ema_value
     ) and breaks_level(breakout_candle, slow_ema_value)
 
+
 def touches(candle, value):
     return candle['high'] > value > candle['low']
 
 
-def is_tight_hull(candles, hull_55_values):
-    hull_dict = {}
-    for i, hull in enumerate(hull_55_values):
-        hull_dict[hull] = candles[i]
-
+def count_indicator_touches(candles, indicator_values):
+    correspnding_candles = candles[-len(indicator_values):]
     count_touches = 0
-    for hull, candle in hull_dict.items():
-        if touches(candle, hull):
+    for i, value in enumerate(indicator_values):
+        candle = correspnding_candles[i]
+        if touches(candle, value):
             count_touches += 1
-    if count_touches > len(candles) / 2:
-        return True
-    
+
+    return count_touches
+        
+
+def is_tight_indicator(no_of_touches, min_touches=None):
+    return no_of_touches >= min_touches
+
+
 def is_cross(candle, fast_ema_values, slow_ema_values):
     fast_ema_value = fast_ema_values[-1]
     prev_fast_ema_value = fast_ema_values[-2]
@@ -82,44 +86,65 @@ class BreakOut:
             self, breakout_candles, fast_ema_values, 
             slow_ema_values, hull_values, min_opposite_candles
         ):
-        self.lookback_candles = breakout_candles[: -1],
-        self.breakout_candle = breakout_candles[-1],
-        self.min_opposit = min_opposite_candles,
-        self.fast_ema_values = fast_ema_values,
-        self.slow_ema_values = slow_ema_values,
-        self.hull_values = hull_values,
-        
-        self.score = self.calculate_score()
+        self.breakout_candles = breakout_candles
+        self.lookback_candles = breakout_candles[: -1]
+        self.breakout_candle = breakout_candles[-1]
+        self.min_opposit = min_opposite_candles
+        self.fast_ema_values = fast_ema_values
+        self.slow_ema_values = slow_ema_values
+        self.breakout_hull_values = hull_values[-len(self.breakout_candles):]
 
-    def calculate_score(self):
-        if is_engulfing_breakout(
-            self.lookback_candles, 
+        self._hull_touches = self.get_hull_touches()
+        self._score = self.calculate_score()
+        
+
+    def is_cross(self):
+        return is_cross(
             self.breakout_candle, 
-            self.min_opposit
-            ):
-            score += 5
-        if breaks_emas(
+            self.fast_ema_values, 
+            self.slow_ema_values
+        )
+
+    def get_hull_touches(self):
+        return count_indicator_touches(
+            candles=self.breakout_candles,
+            indicator_values=self.breakout_hull_values 
+        )
+    
+    def is_tight_hull(self, min_touches=3):
+        hull_touches = self._hull_touches
+        if not min_touches:
+            min_touches = len(self.breakout_candles)/2
+        return hull_touches >= min_touches
+    
+    def breaks_emas(self):
+        return breaks_emas(
             self.breakout_candle, 
             self.fast_ema_values[-1], 
             self.slow_ema_values[-1]
-            ):
-            score += 2
-        if is_tight_hull(
+        )
+    
+    def is_engulfing(self):
+        return is_engulfing_breakout(
             self.lookback_candles, 
             self.breakout_candle, 
-            self.hull_values
-            ):
-            score += 2
-        if is_cross(
-            self.breakout_candle, 
-            self.fast_ema_values[-1], 
-            self.fast_ema_values[-2], 
-            self.slow_ema_values[-1], 
-            self.slow_ema_values[-2]
-            ):
+            self.min_opposit
+        )
+    
+    def calculate_score(self):
+        score = 0
+        if self.is_engulfing():
+            score += 5
+        if self.breaks_emas():
             score += 1
+        if self.is_tight_hull():
+            score += 2
+        if self.is_cross():
+            score += 2
         return score
 
-    def is_valid(self, min_score=5):
-        return self.score > min_score
-    
+    def is_valid(self, min_score=6):
+        return self._score >= min_score 
+
+    def get_score(self):
+        return self._score

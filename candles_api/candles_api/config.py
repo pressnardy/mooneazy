@@ -1,6 +1,6 @@
 
 SUPPORTED_SYMBOLS = {
-    'crypto': {'BTCUSDT', 'ETHUSDT'},
-    'commodities': {'GLD'},
+    'binance': {'BTCUSDT', 'ETHUSDT', 'XAUUSDT'},
+    'commodities': {'GC=F'},
     'forex': {}
 }

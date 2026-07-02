@@ -210,8 +210,11 @@ def get_all_signals(candles, buy_levels=None, sell_levels=None, fo_lookback=5):
     return all_signals
 
 
-def get_active_signals(candles, interval, buy_levels=None, sell_levels=None, fo_lookback=5):
+def get_active_signals(candles, interval, buy_levels=[], sell_levels=[], fo_lookback=5):
+    # print(f'buy_levels: {buy_levels}, sell levels: {sell_levels}')
     active_signals = []
+    latest_buy_level = {}
+    latest_sell_level = {}
     if buy_levels:
         latest_buy_level = sorted(buy_levels, key=lambda k: k['time'], reverse=True)[0]
     if sell_levels:

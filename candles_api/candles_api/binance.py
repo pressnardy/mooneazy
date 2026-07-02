@@ -13,11 +13,14 @@ def get_candles_from_params(params: dict)->list[dict]:
 	url = f"{base_url}{endpoint}"
 	try:
 		response = requests.get(url, params=params).json()
-	except ConnectionError as e:
+	except Exception as e:
 		raise api_errors.CandleFetchingFailed(
-			f'Binance API failed to fetch candles from parameters'
-			f'Connection Error:'
-		) from e
+			f"""
+			Binance API failed to fetch candles from parameters
+			Parameters: {params}
+			Error: {e}
+			"""
+		)
 	
 	# print(f'from binance: {response}')
 	candles = []
@@ -28,8 +31,14 @@ def get_candles_from_params(params: dict)->list[dict]:
 			values = [float(i) for i in data[:7]]
 			candle = dict(zip(keys, values))
 			candles.append(candle)
-		except ValueError as e:
-			raise api_errors.CandleCreationFailed from e
+		except Exception as e:
+			raise api_errors.CandleCreationFailed(
+				f"""
+				parameters: {params}'
+				data: {data} 
+				error: {e}
+				"""
+			)
 	return candles
 
 
@@ -51,9 +60,11 @@ def get_candles(parameters)->list[dict]:
 	
 
 if __name__ == "__main__":
-	timeframe = "30m"
-	symbol = "BTCUSDT"
-	quantity = 20
-	candles = get_candles(interval=timeframe, limit=quantity, symbol=symbol)
-	
+	parameters = {
+	'interval': "30m",
+	'symbol': "XAUUSDT",
+	'limit': 20
+	}
+	candles = get_candles(parameters=parameters)
+	print(candles)
 

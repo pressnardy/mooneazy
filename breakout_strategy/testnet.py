@@ -1,29 +1,16 @@
 import json
 from breakout_strategy import emas, hma
+from breakout_strategy.breakout import count_indicator_touches
+from tests.test_data import breakout_data
 
-def get_candles_from_json(file_path):
-    with open(file_path, 'r', encoding='utf-8') as file:
-        return json.load(file)
-    
+def main():
+    test_data = breakout_data.score_5_data
+    candles = test_data['breakout_candles']
+    hull_values = test_data['hull_55_values']
 
-def get_ema(file_path, period):
-    return emas.EMA.get_emas(candles)
+    touches = count_indicator_touches(candles, hull_values)
+    # print(touches)
 
-
-def get_breakout_hma(indicator_candles):
-    hmas = hma.BreakoutHMA(
-        indicator_candles,
-        55,
-        5
-    )
-
-    return hmas.values()
-
-    
-    
 if __name__ == '__main__':
-    file_path = 'tests/test_data/candles.json'
-    candles = get_candles_from_json(file_path)
-    breakout_emas = get_breakout_hma(candles)
-
-    print(json.dumps(breakout_emas, indent=4))
+    main()
+    

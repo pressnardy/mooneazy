@@ -4,7 +4,6 @@ from pullback_strategy import htf_trend
 from pullback_strategy import config
 from pullback_strategy import pivots
 import pullback_strategy.errors as errors
-import util
 
 
 def get_pivots(trade_candles, lookback_left=None, lookback_right=None):

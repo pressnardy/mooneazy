@@ -1,0 +1,2 @@
+candles-api
+pytest>=9.0.3

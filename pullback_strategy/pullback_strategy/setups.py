@@ -31,7 +31,10 @@ def get_setup_signals(symbols:list = []):
         symbols = config.SUPPORTED_SYMBOLS
     signals = []
     for symbol in symbols:
-        signals.extend(get_setup_signal(symbol))
+        symbol_signal = get_setup_signal(symbol)
+        if symbol_signal:
+            signals.extend(symbol_signal)
+
     return signals or None
 
     

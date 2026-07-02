@@ -1,12 +1,10 @@
 from candles_api.api import get_candles
-
+import candles_api.config as config
 
 def main():
-    supported_symbols = {
-        'crypto': {'BTCUSDT', 'ETHUSDT'}
-    }
+    supported_symbols = config.SUPPORTED_SYMBOLS
     parameters = {
-        'symbol': 'BTCUSDT', 'interval': '15m', 'limit': 100
+        'symbol': 'GLD', 'interval': '15m', 'limit': 100
     }
     print(get_candles(parameters=parameters, supported_symbols=supported_symbols))
 

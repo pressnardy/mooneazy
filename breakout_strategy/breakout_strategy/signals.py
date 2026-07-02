@@ -71,13 +71,13 @@ def get_signal(
         lookback_left=lookback_left
     )
 
-    is_valid_breakout = BreakOut(
+    breakout = BreakOut(
         breakout_candles=breakout_candles,
         fast_ema_values=fast_emas,
         slow_ema_values=slow_emas,
         hull_values=hull_values,
         min_opposite_candles=min_opposite_candles
-    ).is_valid()
+    )
 
     in_trend = htf_trend.in_trend(
         htf_candles=htf1_candles, 
@@ -87,10 +87,12 @@ def get_signal(
         slow_ema=ema_cross_periods[1]
     )
 
-    if is_valid_breakout and in_trend:
-        return make_trade_signal(breakout_candle, interval, tp_rrrs, sl_padding)
+    if breakout.is_valid() and in_trend:
+        return make_trade_signal(
+            breakout_candle, 
+            interval, tp_rrrs, 
+            sl_padding, score=breakout.get_score()
+        )
         
     return None
-
-
 

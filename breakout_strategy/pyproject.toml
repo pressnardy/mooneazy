@@ -9,5 +9,6 @@ dependencies = [
     "pytest>=9.0.3",
 ]
 
+
 [tool.uv.sources]
 candles-api = { path = "../candles_api", editable = true }

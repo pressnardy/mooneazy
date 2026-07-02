@@ -8,9 +8,8 @@ dependencies = [
     "candles-api",
     "pullback-strategy",
     "breakout-strategy",
-    "range-strategy",
+    "ultimate_setups"
 ]
-
 
 [tool.uv.sources]
 candles-api = { path = "../candles_api", editable = true }
@@ -19,9 +18,3 @@ ultimate-setups = { path = "../ultimate_setups", editable=true }
 breakout-strategy = { path = "../breakout_strategy", editable=true }
 range-strategy = { path = "../range_strategy", editable=true }
 
-[tool.uv]
-override-dependencies = [
-    "requests ; sys_platform == 'never'",
-    "pytest ; sys_platform == 'never'"
-    
-]

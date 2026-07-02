@@ -58,9 +58,9 @@ def get_trade_signals(
     }
 
     if pullback_level['is_bullish'] == True:
-        kwargs['buy_levels'] = pullback_level
+        kwargs['buy_levels'] = pullback_level['pullback_pivot']
     if pullback_level['is_bullish'] == False:
-        kwargs['sell_levels'] = pullback_level
+        kwargs['sell_levels'] = pullback_level['pullback_pivot']
 
     active_signals = get_active_signals(**kwargs)
     for signal in active_signals:

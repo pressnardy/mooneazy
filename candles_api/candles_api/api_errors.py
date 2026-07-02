@@ -1,15 +1,15 @@
 
 class YahooAPIError(Exception):
-    def __init__(self, error_message=None):
-        self.message = f"Yahoo API failed to fetch candles{error_message}"
+    def __init__(self, message=None):
+        self.message = message or f"Yahoo API failed to fetch candles!!"
         super().__init__(self.message)
         
 
 class BinanceAPIError(Exception):
-    def __init__(self, error_message=None):
-        self.message = f"Binance API failed to fetch candles{error_message}"
+    def __init__(self, message=None):
+        self.message = message or f"Binance API failed to fetch candles!!"
         super().__init__(self.message)
-        
+
 
 class CandleCreationFailed(Exception):
     def __init__(self, message=None):
