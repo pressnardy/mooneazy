@@ -1,6 +1,6 @@
-from candles_api import api
-from pullback_strategy import signals
-from pullback_strategy import config
+from candles_api.candles_api import api
+from pullback_strategy.pullback_strategy import signals
+from pullback_strategy.pullback_strategy import config
 
 def get_setup_signal(symbol):
     HTF_INTERVAL, HTF_LIMIT = config.HTF_ARGS
@@ -15,7 +15,7 @@ def get_setup_signal(symbol):
     htf_candles = api.get_candles(htf_params)
     trading_candles = api.get_candles(trading_tf_parameters)
 
-    trade_signals = signals.get_trade_signals(
+    trade_signal = signals.get_trade_signal(
         htf_candles=htf_candles,
         trading_candles=trading_candles,
         trading_interval=TRADING_TF_INTERVAL,
@@ -23,7 +23,7 @@ def get_setup_signal(symbol):
         lookback_values=LOOKBACK_VALUES[:-1],
         fo_lookback=LOOKBACK_VALUES[-1]
     )
-    return trade_signals
+    return trade_signal
 
 
 def get_setup_signals(symbols:list = []):
@@ -33,7 +33,7 @@ def get_setup_signals(symbols:list = []):
     for symbol in symbols:
         symbol_signal = get_setup_signal(symbol)
         if symbol_signal:
-            signals.extend(symbol_signal)
+            signals.append(symbol_signal)
 
     return signals or None
 

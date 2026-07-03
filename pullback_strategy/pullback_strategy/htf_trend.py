@@ -1,6 +1,6 @@
 
-from pullback_strategy.emas import EmaCross
-import pullback_strategy.errors as errors
+from pullback_strategy.pullback_strategy.emas import EmaCross
+from pullback_strategy.pullback_strategy import errors
 
 def is_bullish_cross(htf_candles, slow_ema_period, fast_ema_period):
     cross = EmaCross(

@@ -1,27 +1,13 @@
-from pullback_strategy.pullback import get_valid_pullback_level
-from pullback_strategy.fakeouts import get_active_signals
-from pullback_strategy.trading import get_trade
-from pullback_strategy import config
+from pullback_strategy.pullback_strategy.pullback import get_valid_pullback_level
+from pullback_strategy.pullback_strategy.fakeouts import get_active_signals
+from pullback_strategy.pullback_strategy.trading import get_trade
 
 
-def get_trade_signal(
-        trading_candles, 
-        interval, 
-        fo_lookback, 
-        tp_rrrs, 
-        sl_padding
-    ):
-    lookback_candles = trading_candles[-fo_lookback:]
-    trigger_candle = trading_candles[-1]
-    if trigger_candle['open'] > trigger_candle['close']:
-        lookback_hl = min(c['low'] for c in lookback_candles)
-    else:
-        lookback_hl = max(c['high'] for c in lookback_candles)
-    signal = {
-        'trigger_candle': trigger_candle,
-        'lookback_hl': lookback_hl,
-        'interval': interval
-    }
+def make_trade_signal(signal, tp_rrrs, sl_padding) -> dict:
+    signal_type = (
+        'pullback_buy' if 'buy' in signal['signal_type'] else 'pullback_sell'
+    )
+    signal['signal_type'] = signal_type
     trade_signal = get_trade(
         signal=signal, 
         tp1_rrr=tp_rrrs[0], 
@@ -31,26 +17,28 @@ def get_trade_signal(
     return trade_signal
 
 
-def get_trade_signals(
+def get_trade_signal(
         htf_candles, 
-        trading_candles, 
+        trading_tf_candles, 
         trading_interval: str = '15min', 
         ema_periods: tuple = (8, 20), 
         lookback_values: tuple = (5, 5), 
-        fo_lookback: int = 5
+        fo_lookback: int = 5,
+        tp_rrrs: tuple = (2, 5),
+        sl_padding: int = 0.001,
     ):
-    trade_signals = []
+    
     slow_ema, fast_ema = ema_periods
     lookback_left, lookback_right = lookback_values
 
     pullback_level = get_valid_pullback_level(
-        htf_candles, trading_candles, slow_ema, fast_ema, 
+        htf_candles, trading_tf_candles, slow_ema, fast_ema, 
         lookback_left, lookback_right
     )
     if not pullback_level:
         return None
     kwargs = {
-        'candles': trading_candles, 
+        'candles': trading_tf_candles, 
         'interval': trading_interval,
         'buy_levels': None,
         'sell_levels': None,
@@ -63,8 +51,17 @@ def get_trade_signals(
         kwargs['sell_levels'] = pullback_level['pullback_pivot']
 
     active_signals = get_active_signals(**kwargs)
-    for signal in active_signals:
-        trade_signals.append(get_trade_signal(signal))
+    if not active_signals:
+        return None
+    sorted_signals = sorted(active_signals, key=lambda k :k['time'], reverse=True)
+    active_signal = sorted_signals[0] | {'tp_rrrs': tp_rrrs}
+    trade_signal = make_trade_signal(
+        signal=active_signal,
+        interval=trading_interval,
+        sl_padding=sl_padding,
+        tp_rrrs=tp_rrrs
+    )
 
-    return trade_signals
+    return trade_signal or None
+
 

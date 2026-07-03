@@ -1,5 +1,5 @@
-from ultimate_setups.core import pivots
-from ultimate_setups.core import util
+from ultimate_setups.ultimate_setups.core import pivots
+from ultimate_setups.ultimate_setups.core import util
 
 
 class Chart:

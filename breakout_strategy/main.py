@@ -4,7 +4,7 @@ from breakout_strategy.setups import get_trade_signals
 
 def main():
     trade_signals = get_trade_signals()
-    print(json.dumps(trade_signals, indent=4))
+    print(trade_signals)
 
 
 if __name__ == '__main__':

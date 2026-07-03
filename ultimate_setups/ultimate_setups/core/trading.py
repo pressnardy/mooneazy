@@ -1,5 +1,22 @@
 
 class TradeSetup:
+    '''
+    Converts a signal into a complete trade setup with take profit levels (TP)
+    and stop loss levels (SL).
+
+    Parameters:
+
+        signal: signal is a dictionary with a trigger candle and the lookback_hl.
+                The lookback hl is the high or lowest point in the
+                immediate lookback range that includes the trigger candle.
+                The lookback_hl is used to set the stop loss for the trade 
+                {lookback_hl: int, trigger_candle{tohlcvt}}
+        tp1_rrr: The risk to reward ratio of the first take profit target.
+        tp2_rrr: The risk to reward ratio of the second take profit target.
+        sl_pading: The room beyond the signal high or low given to avoid by 
+                    fakeouts is provided in percentage_as_a_fraction 10% as 0.1
+
+    '''
     def __init__(self, signal, tp1_rrr=None, tp2_rrr=None, sl_padding=None):
         self._tp1_rrr = tp1_rrr
         self._tp2_rrr = tp2_rrr
@@ -9,6 +26,7 @@ class TradeSetup:
         self._trigger_candle = signal["trigger_candle"]
         self._entry_price = signal["trigger_candle"]["close"]
         self._signal_time = signal["trigger_candle"]["time"]
+        self._interval = signal['interval']
 
     @property
     def entry_price(self):
@@ -77,14 +95,16 @@ class BuyTrade(TradeSetup):
     def trade_details(self):
         if self.trade_direction != "buy":
             return None
-        return {
+        trade_signal = self._signal | {
             "trigger_time": self.signal_time,
             "entry_price": self.entry_price,
             "sl": self.buy_sl(),
             "tp1": self.tp1(),
             "tp2": self.tp2(),
-            "direction": "buy"
+            "direction": "buy",
+            "interval": self._interval
         }
+        return trade_signal
 
 
 class SellTrade(TradeSetup):
@@ -107,19 +127,22 @@ class SellTrade(TradeSetup):
     def trade_details(self):
         if self.trade_direction != "sell":
             return None
-        return {
+        trade_signal = self._signal | {
             "trigger_time": self.signal_time,
             "entry_price": self.entry_price,
             "sl": self.sell_sl(),
             "tp1": self.tp1(),
             "tp2": self.tp2(),
-            "direction": "sell"
+            "direction": "sell",
+            "interval": self.interval
         }
+        return trade_signal
 
 
 def get_trade(signal, tp1_rrr=3, tp2_rrr=10, sl_padding=0.01):
     """
     Get trade details based on the trade signal provided.
+
     Param:
         signal: trade signal.
         tp1_rrr: Risk-reward ratio for the first take profit.
@@ -131,8 +154,6 @@ def get_trade(signal, tp1_rrr=3, tp2_rrr=10, sl_padding=0.01):
     trade_details = {}
     if signal is None:
         return None
-    trade_details.update(signal)
-    
     if buy_trade := BuyTrade(
         signal, tp1_rrr, tp2_rrr, sl_padding
         ).trade_details():
@@ -154,3 +175,4 @@ def get_prev_trades(prev_signals, tp1_rrr=3, tp2_rrr=10, sl_padding=0.01):
         trade_details = get_trade(signal, tp1_rrr, tp2_rrr, sl_padding)
         prev_trades.append(trade_details)
     return prev_trades or None
+

@@ -1,5 +1,5 @@
 from tests.test_data import setup_data
-from ultimate_setups.strategies.ultimate_setups import UltimateSetups 
+from ultimate_setups.ultimate_setups.strategies.ultimate_setups import UltimateSetups 
 
 
 def test_sfp():

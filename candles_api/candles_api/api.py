@@ -1,7 +1,7 @@
 import json
-import candles_api.binance as binance
-import candles_api.yahoo as yahoo
-import candles_api.config as config
+from candles_api.candles_api import binance
+from candles_api.candles_api import yahoo
+from candles_api.candles_api import config
 
 
 def get_candles(parameters: dict = None, supported_symbols: dict[set] = None)->list[dict]:

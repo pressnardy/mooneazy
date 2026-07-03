@@ -1,11 +1,11 @@
-from breakout_strategy.breakout import BreakOut, is_bullish
-from breakout_strategy.emas import get_breakout_ema_values
-from breakout_strategy.hma import BreakoutHMA
-from breakout_strategy import htf_trend
-from breakout_strategy.trading import get_trade
+from breakout_strategy.breakout_strategy.breakout import BreakOut, is_bullish
+from breakout_strategy.breakout_strategy.emas import get_breakout_ema_values
+from breakout_strategy.breakout_strategy.hma import BreakoutHMA
+from breakout_strategy.breakout_strategy import htf_trend
+from breakout_strategy.breakout_strategy.trading import get_trade
 
 
-def make_trade_signal(breakout_candle, interval, tp_rrrs, sl_padding):
+def make_trade_signal(breakout_candle, interval, tp_rrrs, sl_padding, score):
     lookback_hl = breakout_candle['high']
     signal_type = 'engulfing_breakout_sell'
     if is_bullish(breakout_candle):
@@ -15,7 +15,8 @@ def make_trade_signal(breakout_candle, interval, tp_rrrs, sl_padding):
         'trigger_candle': breakout_candle,
         'lookback_hl': lookback_hl,
         'sinal_type': signal_type,
-        'interval': interval
+        'interval': interval,
+        'score': score
     }
     trade_signal = get_trade(
         signal=signal, 
@@ -50,7 +51,7 @@ def get_indicator_values(
     return fast_emas, slow_emas, breakout_hull_values
 
 
-def get_signal(
+def get_breakout_trade_signal(
         trading_tf_candles, 
         htf1_candles, 
         htf2_candles,
@@ -91,7 +92,8 @@ def get_signal(
         return make_trade_signal(
             breakout_candle, 
             interval, tp_rrrs, 
-            sl_padding, score=breakout.get_score()
+            sl_padding, 
+            score=breakout.get_score()
         )
         
     return None

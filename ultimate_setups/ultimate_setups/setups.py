@@ -1,6 +1,6 @@
-from ultimate_setups import signals
-from ultimate_setups.config import ULTIMATE_SCALPING_SETTINGS as scalping_configs
-from candles_api import api
+from ultimate_setups.ultimate_setups import signals
+from ultimate_setups.ultimate_setups.config import ULTIMATE_SCALPING_SETTINGS as scalping_configs
+from candles_api.candles_api import api
 
 
 class Setups:
@@ -8,7 +8,7 @@ class Setups:
             symbol:str = 'BTCUSDT', 
             configs:dict = scalping_configs, 
             get_candles:callable = api.get_candles, 
-            get_signals:callable = signals.get_signals
+            get_signals:callable = signals.get_signal
         ):
         self._configs = configs
         self._symbol = symbol
@@ -19,14 +19,13 @@ class Setups:
         self._trading_candles = self.get_candles(parameters=self._configs['trading_tf_parameters'])
 
     def get_candles(self, parameters):
-        # print(parameters)
         parameters['symbol'] = self._symbol
         return self._get_candles(parameters=parameters)
 
-    def get_trade_signals(self):
+    def get_trade_signal(self):
         configs = self._configs
         
-        signals = self._get_signals(
+        signal = self._get_signals(
             htf1_candles=self._htf1_candles,
             htf2_candles=self._htf2_candles,
             tranding_candles=self._trading_candles,
@@ -36,7 +35,7 @@ class Setups:
             interval=configs['trading_tf_parameters']['interval'],
             tp_rrrs=configs['tp_rrrs'],
         )
-        return signals
+        return signal
     
 
 def get_signals(
@@ -44,10 +43,9 @@ def get_signals(
     )->list[dict]:
     all_signals = []
     for symbol in supported_symbols:
-        signals = Setups(symbol=symbol).get_trade_signals()
-        all_signals.append(signals)
-    
-    return all_signals
+        if signal := Setups(symbol=symbol).get_trade_signal():
+            all_signals.append(signal)
+    return all_signals or None
 
 
 

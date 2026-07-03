@@ -4,8 +4,8 @@ config file. Applys the signals algorithms and trade setup algoriths
 to the candles
 '''
 from candles_api import api
-from breakout_strategy import config
-from breakout_strategy import signals
+from breakout_strategy.breakout_strategy import config
+from breakout_strategy.breakout_strategy import signals
 
 
 def get_candles(symbol, interval, limit):

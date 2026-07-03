@@ -46,6 +46,8 @@ def scalper():
     while True:
         trade_alerts, error = get_trade_alert()
         if error:
+            print(error)
+            time.sleep(60)
             continue
         if trade_alerts:
             print_alert(trade_alerts)

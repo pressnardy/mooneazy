@@ -1,7 +1,7 @@
 import pytest
-from breakout_strategy import emas, hma
+from breakout_strategy.breakout_strategy import emas, hma
 import json
-from candles_api import api
+from candles_api.candles_api import api
 
 CANDLES_FILE_PATH = 'tests/test_data/candles.json'
 CANDLES = api.get_candles_from_json(CANDLES_FILE_PATH)

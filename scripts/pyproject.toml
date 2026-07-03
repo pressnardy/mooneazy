@@ -8,7 +8,7 @@ dependencies = [
     "candles-api",
     "pullback-strategy",
     "breakout-strategy",
-    "ultimate_setups"
+    "ultimate-setups"
 ]
 
 [tool.uv.sources]
@@ -16,5 +16,4 @@ candles-api = { path = "../candles_api", editable = true }
 pullback-strategy = { path = "../pullback_strategy", editable=true }
 ultimate-setups = { path = "../ultimate_setups", editable=true }
 breakout-strategy = { path = "../breakout_strategy", editable=true }
-range-strategy = { path = "../range_strategy", editable=true }
 

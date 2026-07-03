@@ -1,6 +1,6 @@
 
-from breakout_strategy.emas import EmaCross
-import breakout_strategy.errors as errors
+from breakout_strategy.breakout_strategy.emas import EmaCross
+from breakout_strategy.breakout_strategy import errors
 
 def is_bullish_cross(htf_candles, slow_ema_period, fast_ema_period):
     cross = EmaCross(

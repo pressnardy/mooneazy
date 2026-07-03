@@ -1,4 +1,4 @@
-from pullback_strategy import util
+from pullback_strategy.pullback_strategy import util
 
 
 def get_bullish_fa(candles, level, fo_lookback):

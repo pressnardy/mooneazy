@@ -1,7 +1,7 @@
 
-from pullback_strategy.pullback import get_pullback_details
+from pullback_strategy.pullback_strategy.pullback import get_pullback_details
 import pytest
-from tests import pivots_data
+from pullback_strategy.tests import pivots_data
 
 
 def test_get_pullback_details():

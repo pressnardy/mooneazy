@@ -1,4 +1,4 @@
-from ultimate_setups.core import pivots
+from ultimate_setups.ultimate_setups.core import pivots
 
 
 def resistance_fib_prices(range, fib_levels, lookback):

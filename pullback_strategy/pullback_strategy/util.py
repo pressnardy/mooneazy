@@ -1,6 +1,5 @@
 import copy
 from datetime import datetime, timezone
-from pullback_strategy import config
 
 
 def is_significant_pullback(

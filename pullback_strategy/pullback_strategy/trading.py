@@ -13,8 +13,8 @@ class TradeSetup:
                 {lookback_hl: int, trigger_candle{tohlcvt}}
         tp1_rrr: The risk to reward ratio of the first take profit target.
         tp2_rrr: The risk to reward ratio of the second take profit target.
-        sl_pading: The room beyond the signal high or low given to avoid by fakeouts.
-                    is provided in percentage_as_a_fraction 10% as 0.1
+        sl_pading: The room beyond the signal high or low given to avoid by 
+                    fakeouts is provided in percentage_as_a_fraction 10% as 0.1
 
     '''
     def __init__(self, signal, tp1_rrr=None, tp2_rrr=None, sl_padding=None):
@@ -26,7 +26,7 @@ class TradeSetup:
         self._trigger_candle = signal["trigger_candle"]
         self._entry_price = signal["trigger_candle"]["close"]
         self._signal_time = signal["trigger_candle"]["time"]
-        self.interval = signal['interval']
+        self._interval = signal['interval']
 
     @property
     def entry_price(self):
@@ -95,15 +95,16 @@ class BuyTrade(TradeSetup):
     def trade_details(self):
         if self.trade_direction != "buy":
             return None
-        return {
+        trade_signal = self._signal | {
             "trigger_time": self.signal_time,
             "entry_price": self.entry_price,
             "sl": self.buy_sl(),
             "tp1": self.tp1(),
             "tp2": self.tp2(),
             "direction": "buy",
-            "interval": self.interval
+            "interval": self._interval
         }
+        return trade_signal
 
 
 class SellTrade(TradeSetup):
@@ -126,7 +127,7 @@ class SellTrade(TradeSetup):
     def trade_details(self):
         if self.trade_direction != "sell":
             return None
-        return {
+        trade_signal = self._signal | {
             "trigger_time": self.signal_time,
             "entry_price": self.entry_price,
             "sl": self.sell_sl(),
@@ -135,6 +136,7 @@ class SellTrade(TradeSetup):
             "direction": "sell",
             "interval": self.interval
         }
+        return trade_signal
 
 
 def get_trade(signal, tp1_rrr=3, tp2_rrr=10, sl_padding=0.01):

@@ -9,8 +9,9 @@ dependencies = [
     "candles-api",
     "pullback-strategy",
     "breakout-strategy",
-    "ultimate_setups",
-    "alerts"
+    "ultimate-setups",
+    "alerts",
+    "pyinstaller>=6.21.0",
 ]
 
 [tool.uv.sources]

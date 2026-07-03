@@ -1,4 +1,4 @@
-from ultimate_setups.core import util
+from ultimate_setups.ultimate_setups.core import util
 
 
 def get_bullish_fa(candles, level, fo_lookback):
@@ -12,8 +12,6 @@ def get_bullish_fa(candles, level, fo_lookback):
         if not lb_low:
             continue
         if fa := is_bullish_fa(candles, lb_low, level, fo_lookback, i):
-            print(f'fa: {fa}')
-
             triggers.append(fa)
 
     return util.eliminate_triggers(triggers) if triggers else None
@@ -213,11 +211,9 @@ def is_bullish_fa(candles, lb_low, level, fo_lookback, candle_index):
         candles, fo_lookback, candle_index
     )
     if min_low != lb_low:
-        print(min_low, lb_low)
         return False
     level_value = util.resolve_level(level)
     candle = candles[candle_index]
-    print(candle)
     if min_oc < level_value < max_oc and candle["close"] > level_value > candle["low"]:
         return {"trigger_candle": candle, "lookback_hl": min_low, "signal_type": "fa_buy", "level": level_value}
     return False

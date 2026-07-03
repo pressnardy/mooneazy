@@ -1,6 +1,6 @@
-from candles_api.api import get_candles
+from candles_api.candles_api.api import get_candles
 import pytest
-from tests import api_test_data 
+from pullback_strategy.tests import api_test_data 
 
 
 def test_missing_symbol():

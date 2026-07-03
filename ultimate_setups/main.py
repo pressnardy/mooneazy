@@ -1,4 +1,4 @@
-from ultimate_setups import setups
+from ultimate_setups.ultimate_setups import setups
 
 def main():
     print(setups.get_signals())

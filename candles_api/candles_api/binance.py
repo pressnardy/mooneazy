@@ -1,5 +1,5 @@
 import requests
-from candles_api import api_errors
+from candles_api.candles_api import api_errors
 
 
 def get_candles_from_params(params: dict)->list[dict]:

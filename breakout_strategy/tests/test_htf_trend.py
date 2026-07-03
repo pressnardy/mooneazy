@@ -1,5 +1,5 @@
-from breakout_strategy.htf_trend import in_trend
-from candles_api.api import get_candles_from_json
+from breakout_strategy.breakout_strategy.htf_trend import in_trend
+from candles_api.candles_api.api import get_candles_from_json
 
 CANDLES = get_candles_from_json('tests/test_data/candles.json')
 

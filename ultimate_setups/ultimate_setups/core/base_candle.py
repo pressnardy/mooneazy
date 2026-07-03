@@ -1,4 +1,4 @@
-from ultimate_setups.core import settings
+from ultimate_setups.ultimate_setups.core import settings
 
 
 class Candle(dict):

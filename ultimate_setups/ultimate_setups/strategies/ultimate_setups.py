@@ -1,6 +1,6 @@
-from ultimate_setups.core.charting import Chart
-from ultimate_setups.core import fakeouts, util
-from ultimate_setups.core import settings
+from typing import Literal
+from ultimate_setups.ultimate_setups.core.charting import Chart
+from ultimate_setups.ultimate_setups.core import fakeouts, util
 
 
 class UltimateSetups:
@@ -55,7 +55,7 @@ class UltimateSetups:
             self._sell_levels = self._chart.all_highs()
         return self._sell_levels
 
-    def get_signals(self):
+    def get_signal(self) -> (dict | None):
         candles, fo_lookback = self._candles, self._fo_lookback
         buy_levels, sell_levels = self.buy_levels(), self.sell_levels()
         # print(f"from ult_setups get_signals {buy_levels}, {sell_levels}")
@@ -63,7 +63,7 @@ class UltimateSetups:
         # print(f"from ult_setups get_signals {signals}")
         if signals:
             sorted_signals = sorted(signals, key=lambda x: x['trigger_candle']['time'], reverse=True)
-            return [sorted_signals[0]]
+            return sorted_signals[0]
         return None
 
     def get_all_signals(self):
@@ -76,20 +76,36 @@ class UltimateSetups:
             return all_signals
         return None
     
-    def get_in_trend_signals(self, htf1_trend, htf2_trend):
-        signals = self.get_signals()
+    def get_in_trend_signal(
+            self, 
+            htf1_trend:Literal['buy', 'sell'], 
+            htf2_trend:Literal['buy', 'sell'],
+            signal:dict={}
+        ) -> (dict | None):
+        signal = signal or self.get_signal()
+        if not signal:
+            return None
+        # print(f'in trend signals: {signals[-1]["signal_type"]}')
+        if htf1_trend == 'buy' or htf2_trend == 'buy' and 'buy' in signal['signal_type']:
+            return signal
+        if htf1_trend == 'sell' or htf2_trend == 'sell' and 'sell' in signal['signal_type']:
+            return signal
+        return None
+    
+    def get_in_trend_signals(
+            self, 
+            htf1_trend:Literal['buy', 'sell'], 
+            htf2_trend:Literal['buy', 'sell'],
+            signals:list=[], 
+        ) -> (list | None):
+        signals = signals or self.get_all_signals()
         if not signals:
             return None
-        print(f'in trend signals: {signals[-1]["signal_type"]}')
-        buy_signals = [signal for signal in signals if 'buy' in signal['signal_type']]
-        sell_signals = [signal for signal in signals if 'sell' in signal['signal_type']]
-        trend_signals = []
-        if htf1_trend == 'buy' or htf2_trend == 'buy':
-            trend_signals.extend(buy_signals)
-        if htf1_trend == 'sell' or htf2_trend == 'sell':
-            trend_signals.extend(sell_signals)
-        return trend_signals
-        
-
+        in_trend_signals = []
+        for signal in signals:
+            if self.get_in_trend_signal(signal, htf1_trend, htf2_trend):
+                in_trend_signals.append(signal)
+        return in_trend_signals or None
+    
 
 

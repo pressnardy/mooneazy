@@ -1,9 +1,9 @@
 from collections import OrderedDict
-from pullback_strategy import util
-from pullback_strategy import htf_trend
-from pullback_strategy import config
-from pullback_strategy import pivots
-import pullback_strategy.errors as errors
+from pullback_strategy.pullback_strategy import util
+from pullback_strategy.pullback_strategy import htf_trend
+from pullback_strategy.pullback_strategy import config
+from pullback_strategy.pullback_strategy import pivots
+from pullback_strategy.pullback_strategy import errors
 
 
 def get_pivots(trade_candles, lookback_left=None, lookback_right=None):
