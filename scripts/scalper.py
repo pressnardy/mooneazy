@@ -1,5 +1,6 @@
 import time
 import pprint
+import traceback
 from scripts.analysis import get_signals
 from alerts.sounds import play_alert
 from ultimate_setups.ultimate_setups.core import util
@@ -34,7 +35,7 @@ def get_trade_alert():
 
 def print_alert(trade_alerts):
     for trade in trade_alerts:
-        pprint.pprint(trade, indent=4, depth=2)
+        print(trade)
 
 
 def play_alert():
@@ -46,7 +47,8 @@ def scalper():
     while True:
         trade_alerts, error = get_trade_alert()
         if error:
-            print(error)
+            play_alert()
+            traceback.print_exc()
             time.sleep(60)
             continue
         if trade_alerts:
@@ -54,7 +56,16 @@ def scalper():
             play_alert()
         time.sleep(600)
 
+def scalper_debugger():
+    while True:
+        trade_alerts, error = get_trade_alert()
+        if error:
+            raise error
+        if trade_alerts:
+            print_alert(trade_alerts)
+            play_alert()
+        time.sleep(30)
 
 if __name__ == "__main__":
     print("Scalper running...")
-    scalper()
+    scalper_debugger()

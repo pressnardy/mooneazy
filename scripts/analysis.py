@@ -17,10 +17,10 @@ class Analyze:
         ):
         self._symbol = symbol
         self._configs = configs or Configs()
-        self._htf1_candles = htf1_candles or self.get_candles('4h', 200)
-        self._htf2_candles = htf2_candles or self.get_candles('1d', 200)
-        self._m30_candles = m30_candles or self.get_candles('30m', 200)
-        self._m15_candles = m15_candles or self.get_candles('15m', 100)
+        self._htf1_candles = htf1_candles or self.get_candles('30m', 200)
+        self._htf2_candles = htf2_candles or self.get_candles('4h', 200)
+        self._m30_candles = m30_candles or self.get_candles('5m', 200)
+        self._m15_candles = m15_candles or self.get_candles('3m', 100)
 
     def get_candles(self, interval, limit):
         parameters = {

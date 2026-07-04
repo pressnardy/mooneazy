@@ -47,16 +47,18 @@ class TradeSetup:
     @property
     def tp1_rrr(self):
         if self._tp1_rrr is None:
-            raise ValueError("provide risk-reward ratio for tp1")
+            raise MissingRRRSError(
+                f"Provide TP1 risk-reward ratio for {self._signal}"
+            )
         return self._tp1_rrr
         
-
     @property
     def tp2_rrr(self):
-        if self._tp2_rrr:
-            raise ValueError("provide risk-reward ratio for tp2")
+        if self._tp2_rrr is None:
+            raise MissingRRRSError(
+                f"Provide TP2 risk-reward ratio for {self._signal}"
+            )
         return self._tp2_rrr
-        
 
     @property
     def sl_padding(self):
@@ -134,7 +136,7 @@ class SellTrade(TradeSetup):
             "tp1": self.tp1(),
             "tp2": self.tp2(),
             "direction": "sell",
-            "interval": self.interval
+            "interval": self._interval
         }
         return trade_signal
 
@@ -175,4 +177,11 @@ def get_prev_trades(prev_signals, tp1_rrr=3, tp2_rrr=10, sl_padding=0.01):
         trade_details = get_trade(signal, tp1_rrr, tp2_rrr, sl_padding)
         prev_trades.append(trade_details)
     return prev_trades or None
+
+
+class MissingRRRSError(Exception):
+    def __init__(self, message):
+        message = message or 'missing risk to reward ratio'
+        super().__init__(message)
+
 

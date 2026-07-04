@@ -39,18 +39,19 @@ def get_pullback_details(pivots, min_fib=0.382, max_fib=0.7):
     pullback_pivot = None
     is_bullish = True if max_impulse > 0 else False
     # print(f'from pullback: impulse_dict: {impulse_dict}')
-    prev_key = None
-    for current_key in impulse_dict:
-        if prev_key == max_impulse and util.is_significant_pullback(
-                impulse=max_impulse, 
-                pullback=current_key,
+    prev_impulse: float = None
+    for impulse in impulse_dict:
+        if prev_impulse == max_impulse and util.is_significant_pullback(
+                impulse=max_impulse,
+                pullback=impulse,
                 min_fib_retracement=min_fib,
                 max_fib_retracement=max_fib
             ):
-            pullback_pivot = impulse_dict[current_key]
-            # break
-        prev_key = current_key
+            pullback_pivot = impulse_dict[impulse]
+        prev_impulse = impulse
         # print(f'from pullback details: {current_key}')
+    if not pullback_pivot:
+        return None
     return {
         'impulse_pivot': impulse_dict[max_impulse],
         'pullback_pivot': pullback_pivot,
@@ -73,8 +74,6 @@ def get_valid_pullback_level(
 
     if not pullback_details:
         return None
-    
-    pullback_pivot = pullback_details['pullback_pivot']
     is_bullish_pullback = pullback_details['is_bullish']
 
     if htf_trend.is_valid_pullback(

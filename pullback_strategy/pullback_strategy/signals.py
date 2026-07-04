@@ -35,20 +35,21 @@ def get_trade_signal(
         htf_candles, trading_tf_candles, slow_ema, fast_ema, 
         lookback_left, lookback_right
     )
+    # print(f'pullback_level: {pullback_level}')
     if not pullback_level:
         return None
     kwargs = {
         'candles': trading_tf_candles, 
         'interval': trading_interval,
-        'buy_levels': None,
-        'sell_levels': None,
+        'buy_levels': [],
+        'sell_levels': [],
         'fo_lookback': fo_lookback,
     }
-
+    
     if pullback_level['is_bullish'] == True:
-        kwargs['buy_levels'] = pullback_level['pullback_pivot']
+        kwargs['buy_levels'].append(pullback_level['pullback_pivot'])
     if pullback_level['is_bullish'] == False:
-        kwargs['sell_levels'] = pullback_level['pullback_pivot']
+        kwargs['sell_levels'].append(pullback_level['pullback_pivot'])
 
     active_signals = get_active_signals(**kwargs)
     if not active_signals:

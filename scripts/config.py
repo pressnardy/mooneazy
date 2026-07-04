@@ -1,30 +1,3 @@
-# supported symbols
-SUPPORTED_SYMBOLS = ['btcusdt', 'ethusdt', 'gld']
-
-# trading candles settings
-PULLBACK_STRATEGY_PARAMETERS = ['15m', 100]
-BREAKOUT_STRATEGY_INTERVALS = ['15m', '30m']
-BREAKOUT_STRATEGY_LIMIT = 200
-RANGE_TRADING_PARAMETERS = ['15m', 200]
-
-# htf candles parameters
-HTF1_CANDLES_PARAMETERS = ['4h', 500]
-HTF2_CANDLES_PARAMETERS = ['1d', 500]
-
-# lookback settings
-FO_LOOKBACK = 5
-RANGE_STRATEGY_PIVOT_LOOKBACK = 30
-LR_LOOKBACK_VALUES = [10, 20]
-
-# indicator settings
-EMA_CROSS_PERIODS = [8, 20]
-HULL_PERIOD = 55
-
-# trading settings
-TP1_RRR = 2
-TP2_RRR = 5
-SL_PADDING = 0.001
-
 
 class Configs:
     def __init__(self):

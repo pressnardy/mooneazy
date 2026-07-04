@@ -97,7 +97,9 @@ def get_lb_high(candles, candle, level, candle_index):
     """
     returns the highest high since the level was formed
     """
-    if int(candle["time"]) <= (level["time"]):
+    if not level:
+        return None
+    if int(candle["time"]) <= int(level["time"]):
         return None
     prev_candles = candles[:candle_index + 1]
     if util.is_tested(prev_candles, level, "sell"):
@@ -113,6 +115,8 @@ def get_lb_low(candles, candle, level, candle_index):
     """
     returns the lowest low since the level was form
     """
+    if not level:
+        return None
     if int(candle["time"]) <= int((level["time"])):
         return None
     prev_candles = candles[:candle_index + 1]
@@ -213,17 +217,10 @@ def get_all_signals(candles, buy_levels=None, sell_levels=None, fo_lookback=5):
 def get_active_signals(candles, interval, buy_levels=[], sell_levels=[], fo_lookback=5):
     # print(f'buy_levels: {buy_levels}, sell levels: {sell_levels}')
     active_signals = []
-    latest_buy_level = {}
-    latest_sell_level = {}
-    if buy_levels:
-        latest_buy_level = sorted(buy_levels, key=lambda k: k['time'], reverse=True)[0]
-    if sell_levels:
-        latest_sell_level = sorted(sell_levels, key=lambda k: k['time'], reverse=True)[0]
-    latest_candles = candles[-fo_lookback:]
-
-    signals = get_all_signals(latest_candles, latest_buy_level, latest_sell_level, fo_lookback)
+    signals = get_all_signals(candles, buy_levels, sell_levels, fo_lookback)
+    print(f'signals: {signals}')
     for signal in signals:
-        signal_time = signal["time"]
+        signal_time = signal['trigger_candle']["time"]
         if util.is_active_signal(signal_time, interval):
             active_signals.append(signal)
     return active_signals

@@ -1,3 +1,5 @@
-from alerts.sounds import play_alert
+from scripts.scalper import scalper_debugger
 
-play_alert()
+if __name__ == "__main__":
+    print("Scalper running...")
+    scalper_debugger()

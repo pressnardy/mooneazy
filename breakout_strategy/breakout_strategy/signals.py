@@ -14,7 +14,7 @@ def make_trade_signal(breakout_candle, interval, tp_rrrs, sl_padding, score):
     signal = {
         'trigger_candle': breakout_candle,
         'lookback_hl': lookback_hl,
-        'sinal_type': signal_type,
+        'signal_type': signal_type,
         'interval': interval,
         'score': score
     }
