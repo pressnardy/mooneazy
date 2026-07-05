@@ -31,9 +31,9 @@ def get_indicator_values(
         indicator_candles, 
         ema_cross_periods = (8, 20),
         hull_period = 55, 
-        lookback_left = 5
+        lookback_left = 6
     ):
-    breakout_lookback = lookback_left + 1
+    breakout_lookback = lookback_left
     fast_ema_period = min(ema_cross_periods)
     slow_ema_period = max(ema_cross_periods)
     fast_emas, slow_emas = get_breakout_ema_values(
@@ -53,8 +53,7 @@ def get_indicator_values(
 
 def get_breakout_trade_signal(
         trading_tf_candles, 
-        htf1_candles, 
-        htf2_candles,
+        htf1_trends,
         lookback_left,
         min_opposite_candles,
         ema_cross_periods,
@@ -64,14 +63,13 @@ def get_breakout_trade_signal(
         sl_padding
     ):
     breakout_candles = trading_tf_candles[-lookback_left - 1 :]
-    breakout_candle = breakout_candles[-1]
     fast_emas, slow_emas, hull_values = get_indicator_values(
         indicator_candles=trading_tf_candles, 
         ema_cross_periods=ema_cross_periods, 
         hull_period=hull_period, 
         lookback_left=lookback_left
     )
-
+    htf1_trend, htf2_trend = htf1_trends
     breakout = BreakOut(
         breakout_candles=breakout_candles,
         fast_ema_values=fast_emas,
@@ -79,22 +77,16 @@ def get_breakout_trade_signal(
         hull_values=hull_values,
         min_opposite_candles=min_opposite_candles
     )
-
-    in_trend = htf_trend.in_trend(
-        htf_candles=htf1_candles, 
-        higher_htf_candles=htf2_candles,
-        is_bullish_pullback=is_bullish(breakout_candle),
-        fast_ema=ema_cross_periods[0],
-        slow_ema=ema_cross_periods[1]
-    )
-
-    if breakout.is_valid() and in_trend:
-        return make_trade_signal(
-            breakout_candle, 
-            interval, tp_rrrs, 
-            sl_padding, 
-            score=breakout.get_score()
+    if breakout_signal := breakout.get_in_trend_breakout(
+        min_score=6, htf1_trend=htf1_trend, htf2_trend=htf2_trend
+        ):
+        trade_signal = make_trade_signal(
+            breakout_candle=breakout_signal['trigger_candle'], 
+            interval=interval,
+            tp_rrrs=tp_rrrs,
+            sl_padding=sl_padding,
+            score=breakout_signal['score']
         )
-        
+        return trade_signal
     return None
-
+           

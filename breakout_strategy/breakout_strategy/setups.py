@@ -3,7 +3,7 @@ Fetches candle stick data from candles api using parameters from the
 config file. Applys the signals algorithms and trade setup algoriths 
 to the candles
 '''
-from candles_api import api
+from candles_api.candles_api import api
 from breakout_strategy.breakout_strategy import config
 from breakout_strategy.breakout_strategy import signals
 
@@ -47,7 +47,7 @@ def get_signal(symbol):
         )
         signal_kwargs['trading_tf_candles'] = candles
         signal_kwargs['interval'] = interval
-        signal = signals.get_signal(**signal_kwargs)
+        signal = signals.get_breakout_trade_signal(**signal_kwargs)
         if signal:
             trade_signals.extend(signal)
     return trade_signals

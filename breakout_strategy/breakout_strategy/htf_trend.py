@@ -12,6 +12,21 @@ def is_bullish_cross(htf_candles, slow_ema_period, fast_ema_period):
         return False
     return True
 
+def get_htf_trends(
+        htf1_candles:list[dict] | None = None, 
+        htf2_candles:list[dict] | None = None, 
+        slow_ema_period:int=20, 
+        fast_ema_period:int=8
+    )-> tuple[str, str]:
+
+    htf1_trend = 'sell'
+    htf2_trend = 'sell'
+    if is_bullish_cross(htf1_candles, slow_ema_period, fast_ema_period):
+        htf1_trend = 'buy'
+    if is_bullish_cross(htf2_candles, slow_ema_period, fast_ema_period):
+        htf2_trend = 'buy'  
+    return htf1_trend, htf2_trend
+
 
 def in_trend(
         htf_candles=None, 

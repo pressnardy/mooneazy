@@ -74,8 +74,12 @@ class BreakoutHMA:
         self.period = period
         self.lookback_left = lookback_left
 
-    def values(self):
+    def values(self) -> list[int | None]:
         close = [candle['close'] for candle in self.indicator_candles]
         all_hma = calculate_hma(data=close, period=self.period)
-        return all_hma[-self.lookback_left - 1:]
-    
+        return all_hma[-self.lookback_left:]
+
+    def get_all_hmas(self) -> list[int | None]:
+        close = [candle['close'] for candle in self.indicator_candles]
+        all_hma = calculate_hma(data=close, period=self.period)
+        return all_hma

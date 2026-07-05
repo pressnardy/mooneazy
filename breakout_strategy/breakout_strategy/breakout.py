@@ -1,5 +1,14 @@
 
-def is_bullish(candle):
+def resolve_level(level:dict | int | float)-> float:
+    """
+    extracts level values for levels passed as dicts
+    and return a list of int
+    """
+    if isinstance(level, dict):
+        level = level["value"]
+    return level
+
+def is_bullish(candle) -> bool:
     return candle['close'] > candle['open']
 
 
@@ -32,6 +41,8 @@ def is_engulfing_breakout(lookback_candles, breakout_candle, min_opposit):
     return breakout_candle['high'] > mid_range and breakout_candle['close'] < min_low
 
 def breaks_level(candle, level):
+    if not isinstance(level, (int, float)):
+        level = level['value']
     if is_bullish(candle):
         return candle['close'] > level > candle['low']
     return candle['close'] < level < candle['high']
@@ -44,6 +55,7 @@ def breaks_emas(breakout_candle, fast_ema_value, slow_ema_value):
 
 
 def touches(candle, value):
+    value = resolve_level(value)
     return candle['high'] > value > candle['low']
 
 
@@ -58,15 +70,15 @@ def count_indicator_touches(candles, indicator_values):
     return count_touches
         
 
-def is_tight_indicator(no_of_touches, min_touches=None):
+def is_tight_indicator(no_of_touches, min_touches):
     return no_of_touches >= min_touches
 
 
 def is_cross(candle, fast_ema_values, slow_ema_values):
-    fast_ema_value = fast_ema_values[-1]
-    prev_fast_ema_value = fast_ema_values[-2]
-    slow_ema_value = slow_ema_values[-1]
-    prev_slow_ema_value = slow_ema_values[-2]
+    fast_ema_value = resolve_level(fast_ema_values[-1])
+    prev_fast_ema_value = resolve_level(fast_ema_values[-2])
+    slow_ema_value = resolve_level(slow_ema_values[-1])
+    prev_slow_ema_value = resolve_level(slow_ema_values[-2])
 
     if not breaks_emas(candle, fast_ema_value, slow_ema_value):
         return False
@@ -117,6 +129,20 @@ class BreakOut:
             min_touches = len(self.breakout_candles)/2
         return hull_touches >= min_touches
     
+    def is_tight_fast_emas(self, min_touches=3):  
+        touches = count_indicator_touches(
+            candles=self.breakout_candles,
+            indicator_values=self.fast_ema_values[-len(self.breakout_candles):]
+        )
+        return is_tight_indicator(touches, min_touches=min_touches)
+
+    def is_tight_slow_emas(self, min_touches=3):
+        touches = count_indicator_touches(
+            candles=self.breakout_candles,
+            indicator_values=self.slow_ema_values[-len(self.breakout_candles):]
+        )
+        return is_tight_indicator(touches, min_touches=min_touches)
+
     def breaks_emas(self):
         return breaks_emas(
             self.breakout_candle, 
@@ -137,10 +163,14 @@ class BreakOut:
             score += 5
         if self.breaks_emas():
             score += 1
-        if self.is_tight_hull():
-            score += 2
+        if self.is_tight_hull(): 
+            score += 1
         if self.is_cross():
-            score += 2
+            score += 1
+        if self.is_tight_fast_emas():
+            score += 1
+        if self.is_tight_slow_emas():
+            score += 1
         return score
 
     def is_valid(self, min_score=6):
@@ -148,3 +178,23 @@ class BreakOut:
 
     def get_score(self):
         return self._score
+
+    def get_in_trend_breakout(self, 
+            min_score, htf1_trend, htf2_trend
+        )->dict[str:list]:
+        candle = self.breakout_candle
+        trigger_candle = None
+        if not self.is_valid(min_score=min_score):
+            return None
+        if is_bullish(candle) and (
+            htf1_trend == 'buy' or htf2_trend == 'buy'
+            ):
+            trigger_candle = candle
+        if not is_bullish(candle) and (
+            htf1_trend == 'sell' or htf2_trend == 'sell'
+            ):
+            trigger_candle = candle
+        if trigger_candle:
+            return {'trigger_candle': trigger_candle, 'score': self._score}
+        return None
+            

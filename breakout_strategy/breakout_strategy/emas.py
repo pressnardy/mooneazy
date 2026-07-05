@@ -44,6 +44,8 @@ class EmaCross:
         self.fast_period = fast_ema_period
         self.slow_period = slow_ema_period
         self.sma_period = 14
+        self.fast_emas = self.get_emas(period=self.fast_period)
+        self.slow_emas = self.get_emas(period=self.slow_period)
 
     def get_emas(self, period):
         return EMA(self.candles, sma_period=self.sma_period, ema_period=period).get_emas()
@@ -56,6 +58,16 @@ class EmaCross:
         period = self.slow_period
         return self.get_emas(period)[-1]
 
+    def is_bullish_cross(self):  
+        current_fast, prev_fast = self.fast_emas[-1], self.fast_emas[-2]
+        current_slow, prev_slow = self.slow_emas[-1], self.slow_emas[-2]
+        return current_fast > current_slow and prev_fast < prev_slow
+    
+    def is_bearish_cross(self):
+        current_fast, prev_fast = self.fast_emas[-1], self.fast_emas[-2]
+        current_slow, prev_slow = self.slow_emas[-1], self.slow_emas[-2]
+        return current_fast < current_slow and prev_fast > prev_slow
+     
     def is_bullish(self):
         return self.get_fast_ema()['value'] > self.get_slow_ema()['value']
 
@@ -99,10 +111,8 @@ def get_breakout_ema_values(indicator_candles, fast_ema=8, slow_ema=20, lookback
 
     '''
 
-    fast_emas = EMA(candles=indicator_candles, ema_period=fast_ema).calculate_emas()[-lookback - 1:]
-    slow_emas = EMA(candles=indicator_candles, ema_period=slow_ema).calculate_emas()[-lookback - 1:]
+    fast_emas = EMA(candles=indicator_candles, ema_period=fast_ema).calculate_emas()[-lookback:]
+    slow_emas = EMA(candles=indicator_candles, ema_period=slow_ema).calculate_emas()[-lookback:]
     return (fast_emas, slow_emas)
-
-
 
 
