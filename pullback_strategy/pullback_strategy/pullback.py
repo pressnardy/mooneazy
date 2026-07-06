@@ -35,6 +35,9 @@ def get_impulse_dict(pivots):
 def get_pullback_details(pivots, min_fib=0.382, max_fib=0.7):
     # print(f'from pullback: pivots: {pivots}')
     impulse_dict = get_impulse_dict(pivots)
+    # print(f'from pullback: impulse_dict: {impulse_dict.keys()}')
+    if not impulse_dict:
+        return None
     max_impulse = max(impulse_dict.keys(), key=abs)
     pullback_pivot = None
     is_bullish = True if max_impulse > 0 else False

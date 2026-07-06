@@ -1,7 +1,6 @@
 from breakout_strategy.breakout_strategy.breakout import BreakOut, is_bullish
 from breakout_strategy.breakout_strategy.emas import get_breakout_ema_values
 from breakout_strategy.breakout_strategy.hma import BreakoutHMA
-from breakout_strategy.breakout_strategy import htf_trend
 from breakout_strategy.breakout_strategy.trading import get_trade
 
 
@@ -53,7 +52,7 @@ def get_indicator_values(
 
 def get_breakout_trade_signal(
         trading_tf_candles, 
-        htf1_trends,
+        htf_trends,
         lookback_left,
         min_opposite_candles,
         ema_cross_periods,
@@ -62,14 +61,14 @@ def get_breakout_trade_signal(
         tp_rrrs,
         sl_padding
     ):
-    breakout_candles = trading_tf_candles[-lookback_left - 1 :]
+    breakout_candles = trading_tf_candles[-lookback_left:]
     fast_emas, slow_emas, hull_values = get_indicator_values(
         indicator_candles=trading_tf_candles, 
         ema_cross_periods=ema_cross_periods, 
         hull_period=hull_period, 
         lookback_left=lookback_left
     )
-    htf1_trend, htf2_trend = htf1_trends
+    htf1_trend, htf2_trend = htf_trends
     breakout = BreakOut(
         breakout_candles=breakout_candles,
         fast_ema_values=fast_emas,

@@ -3,7 +3,7 @@ from pullback_strategy.pullback_strategy import signals as pullback_signals
 from breakout_strategy.breakout_strategy import signals as breakout_signals
 from ultimate_setups.ultimate_setups import signals as ult_signals
 from scripts.config import Configs
-
+from scripts import htf_trend
 
 class Analyze:
     def __init__(
@@ -17,10 +17,21 @@ class Analyze:
         ):
         self._symbol = symbol
         self._configs = configs or Configs()
-        self._htf1_candles = htf1_candles or self.get_candles('30m', 200)
-        self._htf2_candles = htf2_candles or self.get_candles('4h', 200)
-        self._m30_candles = m30_candles or self.get_candles('5m', 200)
-        self._m15_candles = m15_candles or self.get_candles('3m', 100)
+        self._htf1_candles = htf1_candles or self.get_candles('4h', 200)
+        self._htf2_candles = htf2_candles or self.get_candles('1d', 200)
+        self._m30_candles = m30_candles or self.get_candles('30m', 200)
+        self._m15_candles = m15_candles or self.get_candles('15m', 100)
+        self._htf_trends = self.get_htf_trends()
+
+    def get_htf_trends(self):
+        fast_ema_period, slow_ema_period = self._configs.ema_cross_periods
+        trends = htf_trend.get_htf_trends(
+            htf1_candles=self._htf1_candles, 
+            htf2_candles=self._htf2_candles,
+            fast_ema_period=fast_ema_period,
+            slow_ema_period=slow_ema_period
+        )
+        return trends
 
     def get_candles(self, interval, limit):
         parameters = {
@@ -30,7 +41,7 @@ class Analyze:
         }
         return candles_api.get_candles(parameters=parameters)
     
-    def get_pullback_signal(self):
+    def get_pullback_signal(self)->dict[str, any] | None:
         configs = self._configs
         signals = pullback_signals.get_trade_signal(
             htf_candles = self._htf1_candles,
@@ -43,18 +54,17 @@ class Analyze:
         )
         return signals
     
-    def get_breakout_signal(self):
+    def get_breakout_signals(self):
         configs = self._configs
         signals = []
         breakout_parameters = {
-            'htf1_candles': self._htf1_candles,
-            'htf2_candles': self._htf2_candles,
+            'htf_trends': self._htf_trends,
             'lookback_left': configs.breakout_lookback,
             'min_opposite_candles': configs.min_opposite_candles,
             'ema_cross_periods': configs.ema_cross_periods,
             'hull_period': configs.hull_period,
             'tp_rrrs': configs.breakout_tp_rrrs,
-            'sl_padding': configs.sl_padding
+            'sl_padding': configs.sl_padding,
         }
         m15_params = breakout_parameters | {
             'interval': '15m', 'trading_tf_candles': self._m15_candles
@@ -88,12 +98,21 @@ class Analyze:
     
     def get_signals(self):
         signals = []
-        if breakout_signal := self.get_breakout_signal():
+        if breakout_signal := self.get_breakout_signals():
+            # print(f'from get_signals: breakout_signal: {breakout_signal}')
             signals.extend(breakout_signal)
-        if range_signal := self.get_ult_signal():
-            signals.extend(range_signal)
-        if pullback_signals := self.get_pullback_signal():
-            signals.extend(pullback_signals)
+        if ult_signal := self.get_ult_signal():
+            # print(f'from get_signals: ult_signal: {ult_signal}')
+            signals.append(ult_signal)
+        if pullback_signal := self.get_pullback_signal():
+            # print(f'from get_signals: pullback_signal: {pullback_signal}')
+            signals.append(pullback_signal)
+        if not signals:
+            return None
+        
+        for signal in signals:
+            signal['symbol'] = self._symbol
+            signal['time'] = signal['trigger_candle']['time']
         return signals
 
 
@@ -102,7 +121,6 @@ def get_signals(supported_symbols=Configs().supported_symbols):
     for symbol in supported_symbols:
         if symbol_signals := Analyze(symbol).get_signals():
             signals.extend(symbol_signals)
-    return None
+    return signals or None
 
-    
 

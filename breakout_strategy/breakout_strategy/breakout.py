@@ -180,8 +180,13 @@ class BreakOut:
         return self._score
 
     def get_in_trend_breakout(self, 
-            min_score, htf1_trend, htf2_trend
+            min_score:int=6, htf1_trend:str|None=None, htf2_trend:str|None=None
         )->dict[str:list]:
+        """
+        Returns breakout signal that respect either htf1 or htf2 trend
+        The returned signal is a dict with the trigger candle as trigger_candle
+        and the breakout score as score.
+        """
         candle = self.breakout_candle
         trigger_candle = None
         if not self.is_valid(min_score=min_score):

@@ -90,7 +90,7 @@ class Breakouts:
         for i in range(100, len(candles)):
             signal = signals.get_breakout_trade_signal(
                 trading_tf_candles=candles[:i + 1],
-                htf1_trends=('buy', 'buy'),
+                htf_trends=('buy', 'buy'),
                 lookback_left=self.fo_lookback,
                 min_opposite_candles=self.min_opposite_candles,
                 ema_cross_periods=(8, 20),

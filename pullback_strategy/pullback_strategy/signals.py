@@ -26,7 +26,7 @@ def get_trade_signal(
         fo_lookback: int = 5,
         tp_rrrs: tuple = (2, 5),
         sl_padding: int = 0.001,
-    ):
+    )->dict[str, any] | None:
     
     slow_ema, fast_ema = ema_periods
     lookback_left, lookback_right = lookback_values

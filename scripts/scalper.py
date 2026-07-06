@@ -1,9 +1,10 @@
 import time
 import pprint
 import traceback
+import json
 from scripts.analysis import get_signals
 from alerts.sounds import play_alert
-from ultimate_setups.ultimate_setups.core import util
+from scripts import util
 
 ALERT_UPTIME = 90
 
@@ -25,8 +26,8 @@ def get_trade_alert():
         for signal in signals:
             if not signal:
                 continue
-            trade_time = signal["time"]
-            if util.is_active_signal(trade_time, ALERT_UPTIME):
+            # pprint.pprint(signal, indent=4)
+            if util.is_active_signal(signal["time"], signal["interval"]):
                 trade_alerts.append(signal)
     if not trade_alerts:
         trade_alerts = None
@@ -35,7 +36,7 @@ def get_trade_alert():
 
 def print_alert(trade_alerts):
     for trade in trade_alerts:
-        print(trade)
+        print(json.dumps(trade, indent=4))
 
 
 def play_alert():
@@ -47,8 +48,8 @@ def scalper():
     while True:
         trade_alerts, error = get_trade_alert()
         if error:
-            play_alert()
             traceback.print_exc()
+            play_alert()
             time.sleep(60)
             continue
         if trade_alerts:

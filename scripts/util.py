@@ -18,12 +18,15 @@ def get_interval_in_seconds(interval):
 def is_active_signal(signal_time, interval):
     """
     Check if the signal trigger time is within the last uptime duration.
+    Multiplies the interval by 2 to ensure the signal stays valid throughout the next candle.
     parameter:
-        signal_time (unix_time): the timestamp to check.
+        signal_time (unix_time): the trigger candle start time i.e time.
         uptime_duration (int): duration in minutes.
     """
-    uptime_duration_in_seconds = get_interval_in_seconds(interval)
+    # multiply by 2 to account for the time it takes for the candle to close and the signal to be generated
+    uptime_duration_in_seconds = get_interval_in_seconds(interval) * 2
     current_time = datetime.now(timezone.utc).timestamp()
     difference = abs(current_time - signal_time / 1000)
 
     return difference <= uptime_duration_in_seconds
+
