@@ -1,6 +1,6 @@
 from candles_api.candles_api import api as candles_api
 from pullback_strategy.pullback_strategy import signals as pullback_signals
-from breakout_strategy.breakout_strategy import signals as breakout_signals
+from breakout_strategy.breakout_strategy import breakouts
 from ultimate_setups.ultimate_setups import signals as ult_signals
 from scripts.config import Configs
 from scripts import htf_trend
@@ -59,12 +59,13 @@ class Analyze:
         signals = []
         breakout_parameters = {
             'htf_trends': self._htf_trends,
-            'lookback_left': configs.breakout_lookback,
+            'fo_lookback': configs.breakout_lookback,
             'min_opposite_candles': configs.min_opposite_candles,
             'ema_cross_periods': configs.ema_cross_periods,
             'hull_period': configs.hull_period,
             'tp_rrrs': configs.breakout_tp_rrrs,
             'sl_padding': configs.sl_padding,
+            'min_score': self._configs.min_score
         }
         m15_params = breakout_parameters | {
             'interval': '15m', 'trading_tf_candles': self._m15_candles
@@ -72,8 +73,8 @@ class Analyze:
         m30_params = breakout_parameters | {
             'interval': '30m', 'trading_tf_candles': self._m30_candles
         }
-        m15_signal = breakout_signals.get_breakout_trade_signal(**m15_params)
-        m30_signal = breakout_signals.get_breakout_trade_signal(**m30_params)
+        m15_signal = breakouts.Breakouts(**m15_params).get_latest_trade_signal()
+        m30_signal = breakouts.Breakouts(**m30_params).get_latest_trade_signal()
 
         if m15_signal:
             signals.append(m15_signal)

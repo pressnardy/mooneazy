@@ -59,8 +59,10 @@ def get_breakout_trade_signal(
         hull_period,
         interval,
         tp_rrrs,
-        sl_padding
+        sl_padding,
+        min_score = 6
     ):
+    print(f"Checking lookback_left: {lookback_left}")
     breakout_candles = trading_tf_candles[-lookback_left:]
     fast_emas, slow_emas, hull_values = get_indicator_values(
         indicator_candles=trading_tf_candles, 
@@ -76,8 +78,9 @@ def get_breakout_trade_signal(
         hull_values=hull_values,
         min_opposite_candles=min_opposite_candles
     )
+    print(f"Checking Length Candles {len(breakout.breakout_candles)}")
     if breakout_signal := breakout.get_in_trend_breakout(
-        min_score=6, htf1_trend=htf1_trend, htf2_trend=htf2_trend
+        min_score=min_score, htf1_trend=htf1_trend, htf2_trend=htf2_trend
         ):
         trade_signal = make_trade_signal(
             breakout_candle=breakout_signal['trigger_candle'], 

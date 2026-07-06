@@ -32,6 +32,7 @@ class Configs:
 
         # breakout settings
         self.min_opposite_candles = 2
+        self.min_score = 6
 
 
 

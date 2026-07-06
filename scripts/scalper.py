@@ -1,5 +1,4 @@
 import time
-import pprint
 import traceback
 import json
 from scripts.analysis import get_signals
@@ -8,7 +7,7 @@ from scripts import util
 
 ALERT_UPTIME = 90
 
-def get_signal_or_error():
+def get_signals_or_error():
     signal = None
     error = None
     try:
@@ -18,26 +17,23 @@ def get_signal_or_error():
     return signal, error
     
 
-def get_trade_alert():
-    trade_alerts = []
-    signals, error = get_signal_or_error()
-
-    if signals is not None:
-        for signal in signals:
-            if not signal:
-                continue
-            # pprint.pprint(signal, indent=4)
-            if util.is_active_signal(signal["time"], signal["interval"]):
-                trade_alerts.append(signal)
-    if not trade_alerts:
-        trade_alerts = None
-    return trade_alerts, error
+def get_active_signals(signals:list[dict])->list[dict]:
+    active_signals = []
+    if not signals:
+        return None
+    for signal in signals:
+        if not signal:
+            continue
+        if util.is_active_signal(signal["time"], signal["interval"]):
+            active_signals.append(signal)
+    return active_signals
 
 
-def print_alert(trade_alerts):
-    for trade in trade_alerts:
-        print(json.dumps(trade, indent=4))
-
+def print_active_signals(signals):
+    active_signals = get_active_signals(signals)
+    for signal in active_signals:
+        json.dumps(signal)
+        
 
 def play_alert():
     from alerts import sounds
@@ -46,26 +42,20 @@ def play_alert():
 
 def scalper():
     while True:
-        trade_alerts, error = get_trade_alert()
+        signals, error = get_signals_or_error()
         if error:
-            traceback.print_exc()
+            print('erro eroor eorro')
             play_alert()
             time.sleep(60)
             continue
-        if trade_alerts:
-            print_alert(trade_alerts)
-            play_alert()
+        if signals:
+            if active_signals:= get_active_signals(signals):
+                print_active_signals(active_signals)
+                play_alert()
         time.sleep(600)
 
 def scalper_debugger():
-    while True:
-        trade_alerts, error = get_trade_alert()
-        if error:
-            raise error
-        if trade_alerts:
-            print_alert(trade_alerts)
-            play_alert()
-        time.sleep(30)
+    print(get_signals())
 
 if __name__ == "__main__":
     print("Scalper running...")

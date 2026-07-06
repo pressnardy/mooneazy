@@ -1,5 +1,5 @@
 import traceback
-from scripts.scalper import scalper 
+from scripts.scalper import scalper, scalper_debugger
 
 
 def main():

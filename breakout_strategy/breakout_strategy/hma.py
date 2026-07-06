@@ -69,6 +69,10 @@ def calculate_hma(data, period):
 
 
 class BreakoutHMA:
+    """
+    Returns the last n hma values for the breakout strategy
+    Which has a length similar to the lookback_left parameter
+    """
     def __init__(self, indicator_candles, period=55, lookback_left=5):
         self.indicator_candles = indicator_candles
         self.period = period

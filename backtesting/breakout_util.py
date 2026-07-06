@@ -4,6 +4,7 @@ def get_lookback_slice(
         candle_index:int, 
         fo_lookback:int
     ) -> list:
+
     if candle_index < fo_lookback:
         raise ValueError(
             f"""
@@ -29,6 +30,7 @@ def get_lookback_slices(
         lookback:int | None = None, 
         **args
     ) -> dict[str:list]:
+
     if candle_index is None:
         raise ValueError(f"Provide Candle Index for lookback slicing")
     if lookback is None:

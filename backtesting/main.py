@@ -2,15 +2,16 @@ from backtesting.breakouts import Breakouts
 from breakout_strategy.breakout_strategy import breakout
 from candles_api.candles_api import api
 from backtesting.breakout_util import get_lookback_slice
+from breakout_strategy.breakout_strategy import breakouts
 import datetime
-import pprint
 import json
+
 
 def unix_to_utc(unix_timestamp):
     return datetime.datetime.fromtimestamp(unix_timestamp / 1000, tz=datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
 
 def get_candles():
-    parameters = {'symbol': 'ETHUSDT', 'interval': '15m', 'limit': 200}
+    parameters = {'symbol': 'BTCUSDT', 'interval': '30m', 'limit': 200}
     candles = api.get_candles(parameters=parameters)
     return candles
 
@@ -46,6 +47,16 @@ def get_engulfing_breakouts(fo_lookback=5, min_opposite_candles=2):
         print(unix_to_utc(b['time']))
 
 
+def test_breakout_ts_breakouts():
+    candles = get_candles()
+    brkouts = breakouts.Breakouts(
+        trading_tf_candles=candles,
+    )
+    latest = brkouts.get_latest_trade_signal()
+    # for breakout in valid_breakouts:
+    print(unix_to_utc(latest['trigger_candle']['time']))
+    # print(json.dumps(latest, indent=4))
+
 
 if __name__ == "__main__":
-    main()
+    test_breakout_ts_breakouts()
