@@ -30,3 +30,10 @@ def is_active_signal(signal_time, interval):
 
     return difference <= uptime_duration_in_seconds
 
+
+def unix_to_utc(unix_timestamp):
+    return datetime.fromtimestamp(
+        unix_timestamp / 1000, tz=timezone.utc
+    ).strftime('%Y-%m-%d %H:%M:%S')
+
+

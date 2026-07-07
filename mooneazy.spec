@@ -5,7 +5,7 @@ a = Analysis(
     ['mooneazy.py'],
     pathex=[],
     binaries=[],
-    datas=[('alerts/buzzer.wav', 'alerts')],
+    datas=[('alerts\\buzzer.wav', 'alerts')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

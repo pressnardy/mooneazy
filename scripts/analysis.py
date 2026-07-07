@@ -13,7 +13,8 @@ class Analyze:
             htf1_candles:list[dict]=[], 
             htf2_candles:list[dict]=[], 
             m30_candles:list[dict]=[], 
-            m15_candles:list[dict]=[]
+            m15_candles:list[dict]=[],
+            htf_trends:tuple=('buy', 'sell')
         ):
         self._symbol = symbol
         self._configs = configs or Configs()
@@ -21,7 +22,7 @@ class Analyze:
         self._htf2_candles = htf2_candles or self.get_candles('1d', 200)
         self._m30_candles = m30_candles or self.get_candles('30m', 200)
         self._m15_candles = m15_candles or self.get_candles('15m', 100)
-        self._htf_trends = self.get_htf_trends()
+        self._htf_trends = htf_trends or self.get_htf_trends()
 
     def get_htf_trends(self):
         fast_ema_period, slow_ema_period = self._configs.ema_cross_periods
@@ -55,6 +56,7 @@ class Analyze:
         return signals
     
     def get_breakout_signals(self):
+        # print(f"from analysis.analyze: symbol: {self._symbol}: htf_trends: {self._htf_trends}")
         configs = self._configs
         signals = []
         breakout_parameters = {

@@ -55,7 +55,18 @@ def scalper():
         time.sleep(600)
 
 def scalper_debugger():
-    print(get_signals())
+    signals = get_signals()
+    simple_views = []
+    for signal in signals:
+        simple_signal = {
+            "symbol": signal['symbol'],
+            "trigger_time": util.unix_to_utc(signal['trigger_candle']['time']),
+            "entry_price": signal['trigger_candle']['close'],
+            "signal_type": signal['signal_type'],
+            "inerval": signal['interval']
+        }
+        simple_views.append(simple_signal)
+    print(json.dumps(simple_views, indent=4))
 
 if __name__ == "__main__":
     print("Scalper running...")
