@@ -32,7 +32,7 @@ def get_active_signals(signals:list[dict])->list[dict]:
 def print_active_signals(signals):
     active_signals = get_active_signals(signals)
     for signal in active_signals:
-        json.dumps(signal)
+        print(json.dumps(signal, indent=4))
         
 
 def play_alert():
@@ -50,6 +50,7 @@ def scalper():
             continue
         if signals:
             if active_signals:= get_active_signals(signals):
+                print('signaaaaaaaaaaaalsssss')
                 print_active_signals(active_signals)
                 play_alert()
         time.sleep(600)
