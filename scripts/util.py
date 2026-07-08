@@ -35,6 +35,7 @@ def is_active_signal(signal_time, interval):
 
 
 def unix_to_utc(unix_timestamp):
+    unix_timestamp = int(unix_timestamp)
     return datetime.fromtimestamp(
         unix_timestamp / 1000, tz=timezone.utc
     ).strftime('%Y-%m-%d %H:%M:%S')

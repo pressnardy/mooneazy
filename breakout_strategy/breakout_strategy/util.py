@@ -37,7 +37,7 @@ def get_lookback_slice(
 
 
 def is_bullish(candle):
-    return candle['open'] > candle['close']
+    return float(candle['close']) > float(candle['open'])
 
 
 def get_lookback_slices(

@@ -22,6 +22,7 @@ def get_active_signals(signals:list[dict])->list[dict]:
     if not signals:
         return None
     for signal in signals:
+        signal['utc_time'] = util.unix_to_utc(signal['trigger_time'])
         if not signal:
             continue
         if util.is_active_signal(signal["time"], signal["interval"]):
