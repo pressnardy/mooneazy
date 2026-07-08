@@ -54,7 +54,7 @@ def scalper():
                 print('signaaaaaaaaaaaalsssss')
                 print_active_signals(active_signals)
                 play_alert()
-        time.sleep(600)
+        time.sleep(300)
 
 def scalper_debugger():
     signals = get_signals()
