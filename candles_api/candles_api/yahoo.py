@@ -95,7 +95,7 @@ def get_candles(parameters: dict) -> List[Dict]:
 
     if limit <= 0:
         return []
-    return candles[-limit:]
+    return candles[-limit:-1]
 
 
 if __name__ == "__main__":

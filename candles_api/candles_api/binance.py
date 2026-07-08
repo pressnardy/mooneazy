@@ -24,8 +24,8 @@ def get_candles_from_params(params: dict)->list[dict]:
 	
 	# print(f'from binance: {response}')
 	candles = []
-	for data in response:
-
+	# exclude the last unclosed/open candle
+	for data in response[:-1]: 
 		try:
 			keys = ['time', 'open', 'high', 'low', 'close', 'volume', 'end_time']
 			values = [float(i) for i in data[:7]]
@@ -55,6 +55,7 @@ def get_parameters(parameters):
 
 
 def get_candles(parameters)->list[dict]:
+	"""returns candles from binance api exclusding the unclosed candle"""
 	request_params = get_parameters(parameters)
 	return get_candles_from_params(request_params)
 	
